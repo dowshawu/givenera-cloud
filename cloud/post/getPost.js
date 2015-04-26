@@ -35,17 +35,17 @@ Parse.Cloud.define("getPostToUser", function (request, response) {
 	      response.error("get PostTo function failed");
 	    }
 	});
-
 });
 
 Parse.Cloud.define("getDailyBread", function (request, response) {
 	'use strict';
 	var username = request.user.get("username");
+	var userId = request.user.get("objectId")
 	var user1 = new Parse.Query("Relationship");
-	user1.equalTo("user_one", username);
+	user1.equalTo("userOne", userId);
 	user1.equalTo("Status", "confirmed");
 	var user2 = new Parse.Query("Relationship");
-	user2.equalTo("user_two", username);
+	user2.equalTo("userTwo", userId);
 	user2.equalTo("Status", "confirmed");
 	var friendList = new Parse.Query.or(user1,user2);
 
