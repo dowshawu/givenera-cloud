@@ -39,15 +39,15 @@ Parse.Cloud.define("getPostToUser", function (request, response) {
 
 Parse.Cloud.define("getDailyBread", function (request, response) {
 	'use strict';
-	var username = request.user.get("username");
-	var userId = request.user.get("objectId")
 	var user1 = new Parse.Query("Relationship");
-	user1.equalTo("userOne", userId);
+	user1.equalTo("userOne", request.user);
 	user1.equalTo("Status", "confirmed");
 	var user2 = new Parse.Query("Relationship");
-	user2.equalTo("userTwo", userId);
+	user2.equalTo("userTwo", request.user);
 	user2.equalTo("Status", "confirmed");
 	var friendList = new Parse.Query.or(user1,user2);
+	friendList.include("userOne");
+	friendList.include("userTwo");
 
 	friendList.find({
 	    error: function() {
@@ -57,19 +57,15 @@ Parse.Cloud.define("getDailyBread", function (request, response) {
 		var friendList = [];
 		for( var i=0 ; i<friends.length ; ++i ) {
 			var target;
-			if( friends[i].get("user_one")===request.user.get("username") ) {
-				target = friends[i].get("user_two");
+			if( friends[i].get("userOne")===request.user ) {
+				target = friends[i].get("userTwo");
 			} else {
-				target = friends[i].get("user_one");
+				target = friends[i].get("userOne");
 			}
 			friendList.push(target);
 		}
-		friendList.push(request.user.get("username"));
+		friendList.push(request.user);
 		return friendList	
-	}).then(function(friendList) {
-		var friends = new Parse.Query("_User");
-		friends.containedIn("username", friendList);
-		return friends.find();
 	}).then(function(friends) {
 		var queryTo = new Parse.Query("Posts");
 		// queryTo.equalTo("postTo", request.user);
