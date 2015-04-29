@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<style>
+.state{
+	fill: none;
+	stroke: #a9a9a9;
+	stroke-width: 1;
+}
+.state:hover{
+	fill-opacity:0.5;
+}
+#tooltip {   
+	position: absolute;           
+	text-align: center;
+	padding: 20px;             
+	margin: 10px;
+	font: 12px sans-serif;        
+	background: lightsteelblue;   
+	border: 1px;      
+	border-radius: 2px;           
+	pointer-events: none;         
+}
+#tooltip h4{
+	margin:0;
+	font-size:14px;
+}
+#tooltip{
+	background:rgba(0,0,0,0.9);
+	border:1px solid grey;
+	border-radius:5px;
+	font-size:12px;
+	width:auto;
+	padding:4px;
+	color:white;
+	opacity:0;
+}
+#tooltip table{
+	table-layout:fixed;
+}
+#tooltip tr td{
+	padding:0;
+	margin:0;
+}
+#tooltip tr td:nth-child(1){
+	width:50px;
+}
+#tooltip tr td:nth-child(2){
+	text-align:center;
+}
+</style>
+<body>
+	<div id="tooltip"></div><!-- div to hold tooltip. -->
+	<svg width="960" height="600" id="statesvg"></svg> <!-- svg to hold the map. -->
+	<script src="//www.parsecdn.com/js/parse-1.4.2.min.js"></script>
+	<script src="uStates.js"></script> <!-- creates uStates. -->
+	<script src="getStatesHelpData.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script>
+
+	function tooltipHtml(n, d){	/* function to create html content string in tooltip div. */
+		return "<h4>"+n+"</h4><table>"+
+		"<tr><td>Times: </td><td>"+(d.times)+"</td></tr>"+
+		"</table>";
+	}
+	
+	/* draw states on id #statesvg */	
+	Parse.initialize("FIUbdeVa7UksDe3u4ABnh1VTYft4RohnAbbl3kSN", "lcJCTPoe98WQliEso9xQhD70cSkEq6y5nNZXNuld");
+
+	function StatesHelpData(StatesHelp){
+		var maxTimes = 1;
+		var StatesHelpObj = {};
+		for(var i=0; i<StatesHelp.length; i++){
+			if (StatesHelp[i].get("times")>maxTimes){
+				maxTimes = StatesHelp[i].get("times");
+
+			}
+		}
+		for(var i=0; i<StatesHelp.length; i++){
+			var state = StatesHelp[i].get("state");
+			var times = StatesHelp[i].get("times");
+			StatesHelpObj[state] = {times:times, color:d3.interpolate("#FFFFFF", "#FF0000")(times/maxTimes)};
+			console.log("StatesHelpObj[state]['color']: " + StatesHelpObj[state]["color"]);
+		}
+		return StatesHelpObj;
+	}
+
+	Parse.Cloud.run("getStatesHelpData",{}, {
+		success: function (StatesHelp) {
+			uStates.draw("#statesvg", StatesHelpData(StatesHelp), tooltipHtml);
+			console.log(StatesHelp);
+		},
+		error: function (error) {
+			console.log(error);
+		}
+	});
+</script>
+
+</body>
