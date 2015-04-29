@@ -29,5 +29,6 @@ Parse.Cloud.beforeSave("Relationship", function(request, response) {
     }, function(error) {
       response.error(error);
     });
-
+  }
+  
 });
