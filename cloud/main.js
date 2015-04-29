@@ -1,4 +1,4 @@
-
+require('cloud/relationship/relationship.js');
 require('cloud/post/getPost.js');
 require('cloud/post/photo-resize.js');
 require('cloud/search-user.js');
