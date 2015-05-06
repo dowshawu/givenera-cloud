@@ -1,6 +1,23 @@
 Parse.Cloud.define("getPostByUser", function (request, response) {
 	'use strict';
 
+	if( request.params.username ) {
+		var queryUser = new Parse.Query("_User");
+		queryUser.equalTo("username", request.params.username);
+		queryUser.find().then(function(result) {
+			var query = new Parse.Query("Posts");
+			query.equalTo("postBy", result[0]);
+			query.equalTo("Status", "confirmed");
+			query.include("postBy");
+			query.include("postTo");
+			query.descending("updatedAt");
+			return query.find();
+		}).then(function(results) {
+			response.success(results);
+		},function(error) {
+			response.error("get Friends PostBy function failed");
+		});
+	}
 	var query = new Parse.Query("Posts");
 	query.equalTo("postBy", request.user);
 	query.equalTo("Status", "confirmed");
@@ -39,6 +56,23 @@ Parse.Cloud.define("getPendingPostByUser", function (request, response) {
 Parse.Cloud.define("getPostToUser", function (request, response) {
 	'use strict';
 
+	if( request.params.username ) {
+		var queryUser = new Parse.Query("_User");
+		queryUser.equalTo("username", request.params.username);
+		queryUser.find().then(function(result) {
+			var query = new Parse.Query("Posts");
+			query.equalTo("postTo", result[0]);
+			query.equalTo("Status", "confirmed");
+			query.include("postBy");
+			query.include("postTo");
+			query.descending("updatedAt");
+			return query.find();
+		}).then(function(results) {
+			response.success(results);
+		},function(error) {
+			response.error("get Friends PostTo function failed");
+		});
+	}
 	var query = new Parse.Query("Posts");
 	query.equalTo("postTo", request.user);
 	query.equalTo("Status", "confirmed");
