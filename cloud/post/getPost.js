@@ -17,21 +17,22 @@ Parse.Cloud.define("getPostByUser", function (request, response) {
 		},function(error) {
 			response.error("get Friends PostBy function failed");
 		});
+	} else {
+		var query = new Parse.Query("Posts");
+		query.equalTo("postBy", request.user);
+		query.equalTo("Status", "confirmed");
+		query.include("postBy");
+		query.include("postTo");
+		query.descending("updatedAt");
+		query.find({
+		    success: function(results) {
+				response.success(results);
+		    },
+		    error: function() {
+		      response.error("get PostBy function failed");
+		    }
+		});
 	}
-	var query = new Parse.Query("Posts");
-	query.equalTo("postBy", request.user);
-	query.equalTo("Status", "confirmed");
-	query.include("postBy");
-	query.include("postTo");
-	query.descending("updatedAt");
-	query.find({
-	    success: function(results) {
-			response.success(results);
-	    },
-	    error: function() {
-	      response.error("get PostBy function failed");
-	    }
-	});
 });
 
 Parse.Cloud.define("getPendingPostByUser", function (request, response) {
@@ -72,21 +73,23 @@ Parse.Cloud.define("getPostToUser", function (request, response) {
 		},function(error) {
 			response.error("get Friends PostTo function failed");
 		});
+	} else {
+		var query = new Parse.Query("Posts");
+		query.equalTo("postTo", request.user);
+		query.equalTo("Status", "confirmed");
+		query.include("postBy");
+		query.include("postTo");
+		query.descending("updatedAt");
+		query.find({
+		    success: function(results) {
+				response.success(results);
+		    },
+		    error: function() {
+		      response.error("get PostTo function failed");
+		    }
+		});
 	}
-	var query = new Parse.Query("Posts");
-	query.equalTo("postTo", request.user);
-	query.equalTo("Status", "confirmed");
-	query.include("postBy");
-	query.include("postTo");
-	query.descending("updatedAt");
-	query.find({
-	    success: function(results) {
-			response.success(results);
-	    },
-	    error: function() {
-	      response.error("get PostTo function failed");
-	    }
-	});
+	
 });
 
 Parse.Cloud.define("getPendingPostToUser", function (request, response) {
