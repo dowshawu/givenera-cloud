@@ -4,8 +4,8 @@ Parse.Cloud.define("getCategory", function(request, response) {
     category.find({
     	success: function(result){
     		var categoryList = [];
-    		for (var i=0; i<result.Length; i++){
-    			categoryList.push(result[i].get("category"));
+    		for (var i=0; i<result.length; ++i) {
+    			categoryList.push(result[i].get("Category"));
     		}
     		response.success(categoryList);
     	},
