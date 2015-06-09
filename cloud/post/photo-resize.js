@@ -15,7 +15,7 @@ Parse.Cloud.beforeSave("Posts", function (request, response) {
 		return image.setData(response.buffer);
 	}).then(function (image) {
 		// Crop the image to the smaller of width or height.
-	    var ratio = 600/image.width();
+	    var ratio = 400/image.width();
 		return image.scale({
 			ratio : ratio
 	    });
