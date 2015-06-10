@@ -1,7 +1,7 @@
-Parse.cloud.define("getPostImage", function (request, response) {
+Parse.Cloud.define("getPostImage", function (request, response) {
 	'use strict';
 	var postImageQuery = new Parse.Query("PostImage");
-	postImageQuery.equalTo("byPost", request.params.objectId)
+	postImageQuery.equalTo("byPost", request.params.objectId);
 	postImageQuery.find({
 		success: function(result){
 			var postImageList = [];
