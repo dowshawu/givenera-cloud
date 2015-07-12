@@ -4,8 +4,8 @@ Parse.Cloud.define("sharePost", function (request, response) {
 	var Share = Parse.Object.extend("Share");
 
 	var post = new Parse.Query("Posts");
-	query.equatTo("objectId", request.params.post);
-	query.find({
+	post.equalTo("objectId", request.params.post);
+	post.find({
 		error: function (error) {
 			response.error("Post objectId doesn't exit");
 		}
