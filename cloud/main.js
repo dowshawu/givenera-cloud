@@ -9,7 +9,8 @@ require('cloud/postAutoIncrement.js');
 require('cloud/friend/getFriendList.js');
 require('cloud/map/getStatesHelpData.js');
 require('cloud/post/getCategory.js');
-require('cloud/post/share.js');
+require('cloud/post/getPostImage.js');
+require('cloud/post/photos-crop.js')
 // Use Parse.Cloud.define to define as many cloud functions as you want.
 // For example:
 Parse.Cloud.define("hello", function (request, response) {
