@@ -1,3 +1,5 @@
+var _ = require("underscore");
+
 Parse.Cloud.define("emojPost", function (request, response) {
 	'use strict';
 
@@ -26,7 +28,6 @@ Parse.Cloud.define("emojPost", function (request, response) {
 				response.error("already emoj the post");
 			}
 		},
-
 		error: function (error) {
 			response.error(error);
 		}
@@ -35,6 +36,7 @@ Parse.Cloud.define("emojPost", function (request, response) {
 });
 
 Parse.Cloud.define("unemojPost", function (request, response) {
+	
 	'use strict';
 
 	var emoj = new Parse.Query("Emotion");
@@ -87,6 +89,9 @@ Parse.Cloud.define("hasEmoj", function (request, response) {
 });
 
 Parse.Cloud.define("countEmoj", function (request, response) {
+	// input  -> post : objectId
+	// output -> object
+
 	'use strict';
 
 	var query = new Parse.Query("Emotion");
@@ -96,11 +101,57 @@ Parse.Cloud.define("countEmoj", function (request, response) {
 			className: "Posts",
 			objectId: request.params.post
 	});
-	query.count().then(function (result) {
-		response.success(result);
+	query.find().then(function (result) {
+
+		var count = _.countBy(result, function (obj) {
+			return obj.get("type");
+		})
+		_.defaults(count, {"0": 0, "1": 0});
+
+		response.success(count);
 	}, function (error) {
 		response.error("Function hasEmoj error");
 	});
 });
 
+Parse.Cloud.afterSave("Emotion", function (request, response) {
+	var emoj = request.object;
+	// suppose to increment the emotions will be fine,
+	// but right now I call the countEmoj everytime.
 
+	var query = new Parse.Query("Posts");
+	Parse.Promise.when([
+		Parse.Cloud.run("countEmoj", { post: emoj.get("post").id}),
+		query.get(emoj.get("post").id)
+	])
+	.then( function (count, post) {
+		post.set("emotions", count);
+		return post.save();
+	}).then( function (result) {
+		response.success(result);
+	}, function (error) {
+		response.error(error);
+	});
+
+});
+
+Parse.Cloud.afterDelete("Emotion", function (request, response) {
+	var emoj = request.object;
+	// suppose to increment the emotions will be fine,
+	// but right now I call the countEmoj everytime.
+
+	var query = new Parse.Query("Posts");
+	Parse.Promise.when([
+		Parse.Cloud.run("countEmoj", { post: emoj.get("post").id}),
+		query.get(emoj.get("post").id)
+	])
+	.then( function (count, post) {
+		post.set("emotions", count);
+		return post.save();
+	}).then( function (result) {
+		response.success(result);
+	}, function (error) {
+		response.error(error);
+	});
+
+});

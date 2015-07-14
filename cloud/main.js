@@ -2,7 +2,7 @@ require('cloud/post/emotions.js');
 require('cloud/post/compliments.js');
 require('cloud/relationship/relationship.js');
 require('cloud/post/getPost.js');
-require('cloud/post/photo-resize.js');
+require('cloud/post/posts.js');
 require('cloud/search-user.js');
 require('cloud/user/profile-photo.js');
 require('cloud/postAutoIncrement.js');

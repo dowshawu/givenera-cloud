@@ -30,6 +30,8 @@ Parse.Cloud.beforeSave("Posts", function (request, response) {
     	return preview.save();
     }).then(function (preview) {
     	post.set("previewImage", preview);
+    	post.set("compliments", 0);
+    	post.set("emotions", {"0":0,"1":0});
     }).then(function (result) {
     	response.success
     }).then(function(result) {

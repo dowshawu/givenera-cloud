@@ -58,3 +58,29 @@ Parse.Cloud.define("getCompliment", function (request, response) {
 		response.error("can't get the compliments for the post!");
 	});
 });
+
+Parse.Cloud.afterSave("Compliment", function(request) {
+  query = new Parse.Query("Posts");
+  query.get(request.object.get("post").id, {
+    success: function(post) {
+      post.increment("compliments");
+      post.save();
+    },
+    error: function(error) {
+      console.error("Got an error " + error.code + " : " + error.message);
+    }
+  });
+});
+
+Parse.Cloud.afterDelete("Compliment", function(request) {
+  query = new Parse.Query("Posts");
+  query.get(request.object.get("post").id, {
+    success: function(post) {
+      post.increment("compliments", -1);
+      post.save();
+    },
+    error: function(error) {
+      console.error("Got an error " + error.code + " : " + error.message);
+    }
+  });
+});

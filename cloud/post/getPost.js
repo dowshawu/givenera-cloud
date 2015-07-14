@@ -1,3 +1,5 @@
+var _ = require("underscore");
+
 Parse.Cloud.define("getPostByUser", function (request, response) {
 	'use strict';
 
