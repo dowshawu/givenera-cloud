@@ -2,11 +2,18 @@ var Image = require("parse-image");
 
 Parse.Cloud.beforeSave("Posts", function (request, response) {
 	var post = request.object;
-	// if (!post.dirty("Image")) {
-	// 	// The photo isn't being modified.
-	// 	response.success();
-	// 	return;
-	// }
+
+	if ( post.get("compliments") == null ) {
+		post.set("compliments", 0);
+	}
+	if ( post.get("emotions") == null ) {
+    	post.set("emotions", {"0":0,"1":0});
+	}
+	if ( !post.dirty("Image") ) {
+		// The photo isn't being modified.
+		response.success();
+		return;
+	}
 
 	Parse.Cloud.httpRequest({
 		url: post.get("Image").url()
@@ -30,11 +37,7 @@ Parse.Cloud.beforeSave("Posts", function (request, response) {
     	return preview.save();
     }).then(function (preview) {
     	post.set("previewImage", preview);
-    	post.set("compliments", 0);
-    	post.set("emotions", {"0":0,"1":0});
     }).then(function (result) {
-    	response.success
-    }).then(function(result) {
 		response.success();
 	}, function(error) {
 		response.error(error);

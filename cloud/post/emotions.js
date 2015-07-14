@@ -106,7 +106,7 @@ Parse.Cloud.define("countEmoj", function (request, response) {
 		var count = _.countBy(result, function (obj) {
 			return obj.get("type");
 		})
-		_.defaults(count, {"0": 0, "1": 0});
+		_.defaults(count, {0:0, 1:0});
 
 		response.success(count);
 	}, function (error) {
@@ -123,16 +123,13 @@ Parse.Cloud.afterSave("Emotion", function (request, response) {
 	Parse.Promise.when([
 		Parse.Cloud.run("countEmoj", { post: emoj.get("post").id}),
 		query.get(emoj.get("post").id)
-	])
-	.then( function (count, post) {
+	]).then( function (count, post) {
+		console.log(count);
 		post.set("emotions", count);
-		return post.save();
-	}).then( function (result) {
-		response.success(result);
+		post.save();
 	}, function (error) {
-		response.error(error);
+		console.error(error);
 	});
-
 });
 
 Parse.Cloud.afterDelete("Emotion", function (request, response) {
@@ -146,12 +143,10 @@ Parse.Cloud.afterDelete("Emotion", function (request, response) {
 		query.get(emoj.get("post").id)
 	])
 	.then( function (count, post) {
+		console.log(count);
 		post.set("emotions", count);
-		return post.save();
-	}).then( function (result) {
-		response.success(result);
+		post.save();
 	}, function (error) {
-		response.error(error);
+		console.error(error);
 	});
-
 });
