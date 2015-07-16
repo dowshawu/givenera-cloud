@@ -3,6 +3,8 @@ require('cloud/post/compliments.js');
 require('cloud/relationship/relationship.js');
 require('cloud/post/getPost.js');
 require('cloud/post/posts.js');
+require('cloud/post/share.js');
+require('cloud/post/getDailyBread.js');
 require('cloud/search-user.js');
 require('cloud/user/profile-photo.js');
 require('cloud/postAutoIncrement.js');

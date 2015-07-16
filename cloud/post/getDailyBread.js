@@ -1,4 +1,6 @@
-Parse.Cloud.define("getDailyBread1", function (request, response) {
+var _ = require("underscore");
+
+Parse.Cloud.define("getDailyBreadTest", function (request, response) {
 	'use strict';
 
 	var user1 = new Parse.Query("Relationship");
@@ -39,10 +41,25 @@ Parse.Cloud.define("getDailyBread1", function (request, response) {
 		queryBy.equalTo("Status", "confirmed");
 		var mainQuery = Parse.Query.or(queryTo, queryBy);
 		mainQuery.descending("updatedAt");
-		mainQuery.include("postBy","postTo");
-		return [friends, mainQuery.find()];
-	}).then(function(friends, results) {
-		response.success(results);
+		mainQuery.include("postBy","postTo","sharePost");
+		return mainQuery.find();
+	}).then( function (results) {
+		var resultsJson = [];
+		_.each(results, function (obj) {
+			var objJson;
+			if ( obj.has("sharePost")) {
+				objJson = obj.get("sharePost").toJSON();
+				objJson.isShare = true;
+				objJson.shareId = obj.id;
+				objJson.shareBy = obj.get("postBy");
+				// TODO : the emotions here hasn't been synchronized to the original post. Need to decide whether use different emojShare function for purpose. 
+			} else {
+				objJson = obj.toJSON();
+				objJson.isShare = false;
+			}
+			resultsJson.push(objJson);
+		});
+		response.success(resultsJson);
 	}, function(error) {
   		response.error(error);
 	});
