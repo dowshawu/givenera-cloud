@@ -7,7 +7,7 @@ Parse.Cloud.define("emojPost", function (request, response) {
 
 	Parse.Cloud.run("hasEmoj", { post: request.params.post, user: request.user.id }, {
 		success: function(result) {
-			if( !result ) {
+			if( result === -1 ) {
 
 				var emoj = new Emoj();
 				emoj.set("user", request.user);
@@ -75,13 +75,16 @@ Parse.Cloud.define("hasEmoj", function (request, response) {
 			className: "Posts",
 			objectId: request.params.post
 	});
-	query.count().then(function (result) {
-		if ( result === 1 ) {
-			response.success(true);
-		} else if ( result === 0 ) {
-			response.success(false);
+	query.find()
+	.then(function (result) {
+		if ( result.length !== 0 ) {
+			if ( result.length > 1 ) {
+				response.error("over 1");
+			} else {
+				response.success(result[0].get("type"));
+			}
 		} else {
-			response.error("over 1");
+			response.success(-1);
 		}
 	}, function (error) {
 		response.error("Function hasEmoj error");

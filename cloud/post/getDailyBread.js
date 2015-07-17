@@ -1,6 +1,7 @@
 var _ = require("underscore");
 
 Parse.Cloud.define("getDailyBreadTest", function (request, response) {
+	// TODO : put the output file.
 	'use strict';
 
 	var user1 = new Parse.Query("Relationship");
